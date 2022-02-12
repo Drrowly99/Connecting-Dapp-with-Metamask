@@ -1,0 +1,152 @@
+
+<head>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link 
+    rel="stylesheet" 
+    href="https://www.w3schools.com/w3css/4/w3.css/"
+    />
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous">
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"
+      integrity="sha512-5erpERW8MxcHDF7Xea9eBQPiRtxbse70pFcaHJuOhdEBQeAxGQjUwgJbuBDWve+xP/u5IoJbKjyJk50qCnMD7A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  
+  <body class="h-full">
+    <div
+      class="
+        flex
+        w-full
+        h-full
+        justify-center
+        content-center
+        items-center
+        space-x-4
+      "
+    >
+      <div class="flex flex-col space-y-6">
+        <h3 class="text-center">Working with Web3.js!</h3>
+        <div class="flex flex-col space-y-2">
+          <button
+          id = "loginWithEth"
+            onclick="loginWithEth()"
+            class="
+              rounded
+              bg-white
+              border border-gray-400
+              hover:bg-gray-100
+              py-2
+              px-4
+              text-gray-600
+              hover:text-gray-700
+            "
+          >
+            Login & Save ETH Address
+          </button>
+          <p id="userAddress" class="text-gray-600"></p>
+          <button
+            id="logoutButton"
+            onclick="logout()"
+            class="hidden text-blue-500 underline"
+          >
+            Logout
+          </button>
+        </div>
+        <button
+          id="getContractInfo"
+          onclick="getContractSymbol()"
+          class="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white"
+        >
+          Get Contract Symbol
+        </button>
+        <div class="flex flex-col space-y-2"></div>
+      </div>
+    </div>
+    <script>
+        window.onload = async() =>{
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+           const accounts = web3.eth.accounts;
+
+            } else {
+                alert("No ETH brower extension detected.");
+            }
+            if(localStorage.userAddress){
+                document.getElementById('logoutButton').classList.remove('hidden')
+                document.getElementById('loginWithEth').classList.add('hidden')
+            }
+            
+        }
+        function logout() {
+            window.userAddress = localStorage.userAddress;
+            window.localStorage.removeItem("userAddress");
+            showAddress();
+        }
+
+        ethereum.on('accountsChanged', function (accounts) {
+            localStorage.userAddress = accounts[0];
+           
+        });
+
+      const showAddress =  () => {
+          
+            if(!localStorage.userAddress){
+                document.getElementById('loginWithEth').classList.remove('hidden')
+                document.getElementById('userAddress').classList.add('hidden')
+                document.getElementById('logoutButton').classList.add('hidden')
+                return false
+            }  
+                document.getElementById('userAddress').innerHTML = `ETH ADDRESS: ${localStorage.userAddress}`
+                document.getElementById('userAddress').classList.remove('hidden')
+                document.getElementById('logoutButton').classList.remove('hidden')
+                document.getElementById('loginWithEth').classList.add('hidden')
+            
+        }
+
+
+    async function loginWithEth() {
+        if (window.web3) {
+        try {     
+            var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            localStorage.userAddress = accounts[0]
+             var account = accounts[0];
+             showAddress()
+             console.log(localStorage.userAddress );
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        alert("No ETH brower extension detected.");
+      }
+    }
+
+    async function getContractSymbol() {
+      const CONTRACT_ADDRESS = "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE";
+      const contract = new window.web3.eth.Contract(
+        window.ABI,
+        CONTRACT_ADDRESS
+      );
+    //   alert(window.ABI)
+    //   const res = await contract.methods.name().call({from: window.userAddress})
+
+    //   console.log(res)
+    //   debugger
+
+    //   //   const symbol = await contract.methods
+    // //     .symbol()
+    // //     .call({ from: window.userAddress });
+    // //   alert(`Contract ${CONTRACT_ADDRESS} Symbol: ${symbol}`);
+    }
+
+        window.ABI =[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"sender","type":"address"},{"name":"recipient","type":"address"},{"name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"value","type":"uint256"}],"name":"burn","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"recipient","type":"address"},{"name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"owner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"totalSupply","type":"uint256"},{"name":"feeReceiver","type":"address"},{"name":"tokenOwnerAddress","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"}]
+    </script>
+  
